@@ -16,7 +16,7 @@
 		// process options object
 		// delay:number - in ms, cutoff time before settling on what event to fire.
 		options = options || {};
-		var delay = parseInt(options.delay) || 200;
+		var delay = parseInt(options.delay) || 250;
 		
 		function on(eventName, callback) {
 			if (validEvents.indexOf(eventName) !== -1) {
@@ -92,9 +92,14 @@
 			});
 		}
 
+		function setDelay(value) {
+			delay = parseInt(value) || 250;
+		}
+
 		return {
 			on 	: on,
-			off	: off
+			off	: off,
+			setDelay: setDelay
 		};
 	}
 

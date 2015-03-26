@@ -19,4 +19,4 @@ Wraps mousedown, click, and dblclick events around an element to provide mutuall
 
 ## Options
 
-**delay** - in ms, the cutoff time by which a decision must be made about which event to fire. Defaults to 200.
+**delay** - in ms, the cutoff time by which a decision must be made about which event to fire. Defaults to 250.
