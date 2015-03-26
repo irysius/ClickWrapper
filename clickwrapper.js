@@ -5,8 +5,9 @@
 		window.ClickWrapper = definition();
 	}
 })(function () {
+	var validEvents = ['mousedown', 'click', 'dblclick'];
+
 	function ClickWrapper(elements, options) {
-		var validEvents = ['mousedown', 'click', 'dblclick'];
 		var callbackHash = { 
 			'mousedown' : [], 
 			'click' 	: [], 
@@ -102,6 +103,24 @@
 			setDelay: setDelay
 		};
 	}
+
+	// in Kefir.js, use with fromSubUnsub
+	// in RxJS, use with Rx.Observable.fromEventPattern
+	// no help will be provided for baconjs
+	// this could work generally with objects that expose on and off methods.
+	ClickWrapper.generateSubUnsub = function (eventName, wrapper) {
+		if (validEvents.indexOf(eventName) === -1) return null;
+		if (!wrapper || !wrapper.on || !wrapper.off) return null;
+		return {
+			subscribe: function (callback) {
+				wrapper.on(eventName, callback);
+			},
+			unsubscribe: function (callback) {
+				wrapper.off(eventName, callback);
+			},
+			transform: function (value) { return value; }
+		};
+	};
 
 	return ClickWrapper;
 })
