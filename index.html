@@ -12,5 +12,18 @@
 	<p>Included Kefir for FRP testing. I think using the fromSubUnsub probably works best.</p>
 	<script type="text/javascript" src="lib/kefir.min.js"></script>
 	<script type="text/javascript" src="clickwrapper.js"></script>
+	<script>
+		var testWrapper = new ClickWrapper(document.getElementsByTagName('p'));
+		var click = ClickWrapper.generateSubUnsub('click', testWrapper);
+		var dblclick = ClickWrapper.generateSubUnsub('dblclick', testWrapper);
+		var mousedown = ClickWrapper.generateSubUnsub('mousedown', testWrapper);
+		var clickStream = Kefir.fromSubUnsub(click.subscribe, click.unsubscribe)
+			.map(function (event) { return { x: event.clientX, y: event.clientY, type: 'click' } });
+		var dblclickStream = Kefir.fromSubUnsub(dblclick.subscribe, dblclick.unsubscribe)
+			.map(function (event) { return { x: event.clientX, y: event.clientY, type: 'dblclick' } });
+		var mousedownStream = Kefir.fromSubUnsub(mousedown.subscribe, mousedown.unsubscribe)
+			.map(function (event) { return { x: event.clientX, y: event.clientY, type: 'mousedown' } });
+
+	</script>
 </body>
 </html>
