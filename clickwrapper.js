@@ -1,8 +1,8 @@
-;(function (factory) {
+;(function (definition) {
 	if (typeof define === 'function' && define.amd) {
-		define([], factory);
+		define([], definition());
 	} else {
-		window.ClickWrapper = factory;
+		window.ClickWrapper = definition();
 	}
 })(function () {
 	function ClickWrapper(elements, options) {
