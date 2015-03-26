@@ -6,6 +6,9 @@
 	}
 })(function () {
 	var validEvents = ['mousedown', 'click', 'dblclick'];
+	function validEventName(eventName) {
+		return validEvents.indexOf(eventName) !== -1;
+	}
 
 	function ClickWrapper(elements, options) {
 		var callbackHash = { 
@@ -20,14 +23,14 @@
 		var delay = parseInt(options.delay) || 250;
 		
 		function on(eventName, callback) {
-			if (validEvents.indexOf(eventName) !== -1) {
+			if (validEventName(eventName)) {
 				if (callback && typeof callback === 'function') {
 					callbackHash[eventName].push(callback);
 				}
 			}
 		}
 		function off(eventName, callback) {
-			if (validEvents.indexOf(eventName) !== -1) {
+			if (validEventName(eventName)) {
 				var index = callbackHash[eventName].indexOf(callback);
 				callbackHash[eventName].splice(index, 1);
 			}
@@ -97,30 +100,51 @@
 			delay = parseInt(value) || 250;
 		}
 
+		function asKefirStream(eventName) {
+			if (!Kefir || !Kefir.fromSubUnsub) {
+				throw new Error('Could not find Kefir.fromSubUnsub.');
+			}
+			if (!validEventName(eventName)) return null;
+
+			function sub(callback) { on(eventName, callback); }
+			function unsub(callback) { off(eventName, callback); }
+			return Kefir.fromSubUnsub(sub, unsub);
+		}
+
+		function asRxJSObservable(eventName) {
+			if (!Rx || !Rx.Observable || !Rx.Observable.fromEventPattern) {
+				throw new Error('Could not find Rx.Observable.fromEventPattern.');
+			}
+			if (!validEventName(eventName)) return null;
+
+			function add(callback) { on(eventName, callback); }
+			function remove(callback) { off(eventName, callback); }
+			return Rx.Observable.fromEventPattern(add, remove);
+		}
+
+		function asBaconStream(eventName) {
+			// no way to turn off Bacon streams
+			if (!Bacon || !Bacon.fromCallback) {
+				throw new Error('Could not find Bacon.fromCallback.');
+			}
+			if (!validEventName(eventName)) return null;
+
+			return Bacon.fromCallback(function (callback) {
+				on(eventName, function (event) {
+					callback(event);
+				});
+			});
+		}
+
 		return {
 			on 	: on,
 			off	: off,
-			setDelay: setDelay
+			setDelay: setDelay,
+			asKefirStream: asKefirStream,
+			asRxJSObservable: asRxJSObservable,
+			asBaconStream: asBaconStream
 		};
 	}
-
-	// in Kefir.js, use with fromSubUnsub
-	// in RxJS, use with Rx.Observable.fromEventPattern
-	// no help will be provided for baconjs
-	// this could work generally with objects that expose on and off methods.
-	ClickWrapper.generateSubUnsub = function (eventName, wrapper) {
-		if (validEvents.indexOf(eventName) === -1) return null;
-		if (!wrapper || !wrapper.on || !wrapper.off) return null;
-		return {
-			subscribe: function (callback) {
-				wrapper.on(eventName, callback);
-			},
-			unsubscribe: function (callback) {
-				wrapper.off(eventName, callback);
-			},
-			transform: function (value) { return value; }
-		};
-	};
 
 	return ClickWrapper;
 })
