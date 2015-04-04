@@ -14,12 +14,66 @@
 	<script type="text/javascript" src="clickwrapper.js"></script>
 	<script>
 		var testWrapper = new ClickWrapper(document.getElementsByTagName('p'));
-		var clickStream = testWrapper.asKefirStream('click')
+		var clickStream = Kefir.fromEvent(testWrapper, 'click')
 			.map(function (event) { return { x: event.clientX, y: event.clientY, type: 'click' } });
-		var dblclickStream = testWrapper.asKefirStream('dblclick')
+		var dblclickStream = Kefir.fromEvent(testWrapper, 'dblclick')
 			.map(function (event) { return { x: event.clientX, y: event.clientY, type: 'dblclick' } });
-		var mousedownStream = testWrapper.asKefirStream('mousedown')
+		var mousedownStream = Kefir.fromEvent(testWrapper, 'mousedown')
 			.map(function (event) { return { x: event.clientX, y: event.clientY, type: 'mousedown' } });
+
+		// var paragraphs = document.getElementsByTagName('p');
+
+		// paragraphs = Array.prototype.map.call(paragraphs, function (x) { return x; });
+
+		// function obtainStream(element) {
+		// 	var clickStream = Kefir.fromEvent(element, 'click')
+		// 		.map(function (event) { 
+		// 			return { x: event.clientX, y: event.clientY, type: 'click' };
+		// 		});
+		// 	var dblclickStream = Kefir.fromEvent(element, 'dblclick')
+		// 		.map(function (event) { 
+		// 			return { x: event.clientX, y: event.clientY, type: 'dblclick' };
+		// 		});
+		// 	var mousedownStream = Kefir.fromEvent(element, 'mousedown')
+		// 		.map(function (event) { 
+		// 			return { x: event.clientX, y: event.clientY, type: 'mousedown' };
+		// 		});
+		// 	var mergedStream = Kefir.merge([clickStream, dblclickStream, mousedownStream]);
+		// 	return mergedStream;
+		// }
+
+		// var mergedStreams = paragraphs.map(obtainStream);
+
+		// var throttledStream = mergedStreams.map(function (stream) {
+		// 	return stream
+		// 		.throttle(300, { leading: false })
+		// 		.slidingWindow(2)
+		// 		.map(function (tuple) {
+		// 			var pattern;
+		// 			if (tuple.length == 1) {
+		// 				pattern = '_|' + tuple[0].type;
+		// 			} else {
+		// 				pattern = tuple[0].type + '|' + tuple[1].type;
+		// 			}
+
+		// 			switch (pattern) {
+		// 				case 'mousedown|click':
+		// 					return null;
+		// 				case 'mousedown|dblclick':
+		// 					return null;
+		// 				case 'click|dblclick':
+		// 					return null;
+		// 				default:
+		// 					if (tuple.length == 1) return tuple[0];
+		// 					else return tuple[1];
+		// 			}
+		// 		})
+		// 		.filter(function (result) {
+		// 			return !!result;
+		// 		});
+		// });
+
+		// click event will fire after mousedown is held.  click event will not trigger mousedown on throttle.
 
 	</script>
 </body>
