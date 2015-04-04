@@ -100,17 +100,6 @@
 			delay = parseInt(value) || 250;
 		}
 
-		function asKefirStream(eventName) {
-			if (!Kefir || !Kefir.fromSubUnsub) {
-				throw new Error('Could not find Kefir.fromSubUnsub.');
-			}
-			if (!validEventName(eventName)) return null;
-
-			function sub(callback) { on(eventName, callback); }
-			function unsub(callback) { off(eventName, callback); }
-			return Kefir.fromSubUnsub(sub, unsub);
-		}
-
 		function asRxJSObservable(eventName) {
 			if (!Rx || !Rx.Observable || !Rx.Observable.fromEventPattern) {
 				throw new Error('Could not find Rx.Observable.fromEventPattern.');
@@ -140,7 +129,6 @@
 			on 	: on,
 			off	: off,
 			setDelay: setDelay,
-			asKefirStream: asKefirStream,
 			asRxJSObservable: asRxJSObservable,
 			asBaconStream: asBaconStream
 		};
